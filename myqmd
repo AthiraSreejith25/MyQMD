@@ -1,0 +1,57 @@
+#!/bin/sh
+
+if [ ! -d tmp_folder ]; then
+	mkdir tmp_folder
+fi
+
+if [ -e inputfile ]; then
+	cp inputfile tmp_folder
+fi
+
+for i in $(ls |grep test.f);
+	do
+	cp $i tmp_folder
+#	echo $i
+	done
+
+
+
+#to run UrQMD
+cp $1 inputfile
+make lhc
+./runqmd.bash
+
+
+new_folder=$(basename $1)
+
+new_folder='out_'$new_folder
+#echo $new_folder
+#new_folder='out_'$(basename ${1%.*})
+
+while [ -d ../$new_folder ];
+do
+	read -p "Folder name already exists. Enter new folder name: " new_folder
+
+done
+
+#ls | grep test.f
+
+mkdir ../$new_folder
+mv inputfile ../$new_folder
+mv test.f* ../$new_folder
+
+#mv $new_folder ../
+
+#echo 1
+#ls | grep test.f
+
+
+#moving earlier files back to urqmd.3.
+for file in $(ls tmp_folder);
+	do
+	mv tmp_folder/$file .
+#	echo $file
+	done
+
+rm -r tmp_folder
+
